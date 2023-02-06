@@ -39,15 +39,11 @@ To build our bot we will need the following materials. In some cases we will be 
 
 # 3D printed parts
 
-![doodle build](assets/chasis_guide_parts.jpeg){: style="width: 400px;"}
+![doodle build](assets/profile_pic.jpg){: style="width: 400px;"}
 
-1. [front-pale](https://github.com/MarceJara/FutureBot-MiniSumoBot/blob/gh-pages/assets/3d_models/front_pale.stl)
-1. [front-ramp](https://github.com/MarceJara/FutureBot-MiniSumoBot/blob/gh-pages/assets/3d_models/front_ramp.stl)
-1. [sumo-back-ceiling](https://github.com/MarceJara/FutureBot-MiniSumoBot/blob/gh-pages/assets/3d_models/sumo_back_ceiling.stl)
-1. [sumo-base](https://github.com/MarceJara/FutureBot-MiniSumoBot/blob/gh-pages/assets/3d_models/sumo_base.stl)
-1. [sumo-front-ceiling](https://github.com/MarceJara/FutureBot-MiniSumoBot/blob/gh-pages/assets/3d_models/sumo_front_ceiling.stl)
-1. [sumo-side-left](https://github.com/MarceJara/FutureBot-MiniSumoBot/blob/gh-pages/assets/3d_models/sumo_side_left.stl)
-1. [sumo-side-right](https://github.com/MarceJara/FutureBot-MiniSumoBot/blob/gh-pages/assets/3d_models/sumo_side_right.stl)
-1. [ultrasonic-support](https://github.com/MarceJara/FutureBot-MiniSumoBot/blob/gh-pages/assets/3d_models/ultrasonic_support.stl)
-
-
+1. [caster](https://github.com/MarceJara/VinciBot-DoodleBot/blob/main/assets/3d_models/STL%20files/Caster2.stl)
+1. [chasis-arduino](https://github.com/MarceJara/VinciBot-DoodleBot/blob/main/assets/3d_models/STL%20files/Chassis_Arduino2.stl)
+1. [pen-collar](https://github.com/MarceJara/VinciBot-DoodleBot/blob/main/assets/3d_models/STL%20files/Pen_Collar2.stl)
+1. [pen-holder](https://github.com/MarceJara/VinciBot-DoodleBot/blob/main/assets/3d_models/STL%20files/Pen_Holder2.stl)
+1. [stepper-bracket](https://github.com/MarceJara/VinciBot-DoodleBot/blob/main/assets/3d_models/STL%20files/Stepper_Bracket2.stl)
+1. [wheel (Needs fix)](https://github.com/MarceJara/VinciBot-DoodleBot/blob/main/assets/3d_models/STL%20files/Wheel_60_spokes.stl)
