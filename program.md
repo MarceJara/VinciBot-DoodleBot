@@ -9,120 +9,159 @@ title: Coding
 ---
 To control our robot and make it win, we will need to tell it so. In that case, we will need to program its movements and actions. Below, you will see the code to make the combat robot work.
 
-
-First, we need to define the variables and tools we will use to run our program.
 ```c++
-const int AIN1 = 12;
-const int AIN2 = 3;
-const int BIN1 = 4;
-const int BIN2 = 5;
-const int STBY = 6;
-const int PWMA = 9;
-const int PWMB = 10;
-const int Trig = 7;
-const int Echo = 8;
-const int LED = 11;
-float time;
-float distance;
+#include <Servo.h>
 
-enum direction{ CLOCKWISE, COUNTERCLOCKWISE };
+// setup servo
+int servoPin = 8;
+int PEN_DOWN = 20; // angle of servo when pen is down
+int PEN_UP = 80;   // angle of servo when pen is up
+Servo penServo;
 
-// Headers
-void stop_after(int time_delay = 0);
-void set_motor_speed(int speed = 150);
-```
+float wheel_dia=63; //    # mm (increase = spiral out)
+float wheel_base=109; //    # mm (increase = spiral in, ccw) 
+int steps_rev=512; //        # 512 for 64x gearbox, 128 for 16x gearbox
+int delay_time=6; //         # time between steps in ms
 
-Then, we have to configure and set how the arduino should perform.
-```c++
-void setup(){
-    // Configuration for motor driver ports
-    pinMode(AIN1, OUTPUT);
-    pinMode(AIN2, OUTPUT);
-    pinMode(BIN1, OUTPUT);
-    pinMode(BIN2, OUTPUT);
-    pinMode(PWMA, OUTPUT);
-    pinMode(PWMB, OUTPUT);
+// Stepper sequence org->pink->blue->yel
+int L_stepper_pins[] = {12, 10, 9, 11};
+int R_stepper_pins[] = {4, 6, 7, 5};
 
-    // Configuration for ultrasonic port
-    pinMode(Trig, OUTPUT);
-    pinMode(Echo, INPUT);
-    pinMode(LED, OUTPUT);
+int rev_mask[][4] =  {{1, 0, 1, 0}, {0, 1, 1, 0}, {0, 1, 0, 1}, {1, 0, 0, 1}};
 
-    digitalWrite(STBY, HIGH);
-    digitalWrite(Trig, LOW);
+int fwd_mask[][4] =  {{1, 0, 0, 1},{0, 1, 0, 1},{0, 1, 1, 0},{1, 0, 1, 0}};
 
-    // Mandatory initial delay
-    digitalWrite(LED, HIGH);
-    delay(5000);
-    digitalWrite(LED, LOW);
 
-    set_motor_speed(200);
+void setup() {
+  randomSeed(analogRead(1)); 
+  Serial.begin(9600);
+  for(int pin=0; pin<4; pin++){
+    pinMode(L_stepper_pins[pin], OUTPUT);
+    digitalWrite(L_stepper_pins[pin], LOW);
+    pinMode(R_stepper_pins[pin], OUTPUT);
+    digitalWrite(R_stepper_pins[pin], LOW);
+  }
+  penServo.attach(servoPin);
+  Serial.println("setup");
+  
+  penup();
+  
+  delay(1000);
 }
-```
 
-Next, we will program the actions that the robot will execute when turn on.
-```c++
-void loop(){
-    // Calculation of distance by ultrasonic sensor
-    digitalWrite(Trig, HIGH);
-    delayMicroseconds(20);
-    digitalWrite(Trig, LOW);
-    time = pulseIn(Echo, HIGH);
-    distance = time * 0.017175;
 
-    // Action logic
-    rotate(CLOCKWISE);
-    if (distance < 25)
-    {
-    stop_after(0);
-    delay(150);
-    forward();
-    stop_after(200);
+void loop(){ // draw a calibration box 4 times
+  pendown();
+  for(int x=0; x<12; x++){
+    forward(100);
+    left(90);
+  }
+  penup();
+  done();      // releases stepper motor
+  while(1);    // wait for reset
+}
+
+
+// ----- HELPER FUNCTIONS -----------
+int step(float distance){
+  int steps = distance * steps_rev / (wheel_dia * 3.1412); //24.61
+  /*
+  Serial.print(distance);
+  Serial.print(" ");
+  Serial.print(steps_rev);
+  Serial.print(" ");  
+  Serial.print(wheel_dia);
+  Serial.print(" ");  
+  Serial.println(steps);
+  delay(1000);*/
+  return steps;  
+}
+
+
+void forward(float distance){
+  int steps = step(distance);
+  Serial.println(steps);
+  for(int step=0; step<steps; step++){
+    for(int mask=0; mask<4; mask++){
+      for(int pin=0; pin<4; pin++){
+        digitalWrite(L_stepper_pins[pin], rev_mask[mask][pin]);
+        digitalWrite(R_stepper_pins[pin], fwd_mask[mask][pin]);
+      }
+      delay(delay_time);
+    } 
+  }
+}
+
+
+void backward(float distance){
+  int steps = step(distance);
+  for(int step=0; step<steps; step++){
+    for(int mask=0; mask<4; mask++){
+      for(int pin=0; pin<4; pin++){
+        digitalWrite(L_stepper_pins[pin], fwd_mask[mask][pin]);
+        digitalWrite(R_stepper_pins[pin], rev_mask[mask][pin]);
+      }
+      delay(delay_time);
+    } 
+  }
+}
+
+
+void right(float degrees){
+  float rotation = degrees / 360.0;
+  float distance = wheel_base * 3.1412 * rotation;
+  int steps = step(distance);
+  for(int step=0; step<steps; step++){
+    for(int mask=0; mask<4; mask++){
+      for(int pin=0; pin<4; pin++){
+        digitalWrite(R_stepper_pins[pin], rev_mask[mask][pin]);
+        digitalWrite(L_stepper_pins[pin], rev_mask[mask][pin]);
+      }
+      delay(delay_time);
+    } 
+  }   
+}
+
+
+void left(float degrees){
+  float rotation = degrees / 360.0;
+  float distance = wheel_base * 3.1412 * rotation;
+  int steps = step(distance);
+  for(int step=0; step<steps; step++){
+    for(int mask=0; mask<4; mask++){
+      for(int pin=0; pin<4; pin++){
+        digitalWrite(R_stepper_pins[pin], fwd_mask[mask][pin]);
+        digitalWrite(L_stepper_pins[pin], fwd_mask[mask][pin]);
+      }
+      delay(delay_time);
+    } 
+  }   
+}
+
+
+void done(){ // unlock stepper to save battery
+  for(int mask=0; mask<4; mask++){
+    for(int pin=0; pin<4; pin++){
+      digitalWrite(R_stepper_pins[pin], LOW);
+      digitalWrite(L_stepper_pins[pin], LOW);
     }
-}
-```
-
-Finally, we have to define the functions that we used in loop to make it work.
-```c++
-void reverse(){
-    digitalWrite(AIN1, HIGH);
-    digitalWrite(AIN2, LOW);
-
-    digitalWrite(BIN1, HIGH);
-    digitalWrite(BIN2, LOW);
+    delay(delay_time);
+  }
 }
 
-void forward(){
-    digitalWrite(AIN1, LOW);
-    digitalWrite(AIN2, HIGH);
 
-    digitalWrite(BIN1, LOW);
-    digitalWrite(BIN2, HIGH);
-
-    set_motor_speed(200);
+void penup(){
+  delay(250);
+  Serial.println("PEN_UP()");
+  penServo.write(PEN_UP);
+  delay(250);
 }
 
-void stop_after(int time_delay){
-    delay(time_delay);
-    digitalWrite(AIN1, LOW);
-    digitalWrite(AIN2, LOW);
 
-    digitalWrite(BIN1, LOW);
-    digitalWrite(BIN2, LOW);
-}
-
-void rotate(direction dir){
-    digitalWrite(AIN1, dir ? HIGH : LOW);
-    digitalWrite(AIN2, dir ? LOW : HIGH);
-
-    digitalWrite(BIN1, dir ? LOW : HIGH);
-    digitalWrite(BIN2, dir ? HIGH : LOW);
-
-    set_motor_speed(100);
-}
-
-void set_motor_speed(int speed){
-    analogWrite(PWMA, speed);
-    analogWrite(PWMB, speed);
+void pendown(){
+  delay(250);  
+  Serial.println("PEN_DOWN()");
+  penServo.write(PEN_DOWN);
+  delay(250);
 }
 ```
