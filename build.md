@@ -39,7 +39,7 @@ To build our bot we will need the following materials. In some cases we will be 
 
 # 3D printed parts
 
-![doodle build](assets/profile_pic.jpg){: style="width: 400px;"}
+![doodle build](assets/robot_pic.jpg){: style="width: 400px;"}
 
 1. [caster](https://github.com/MarceJara/VinciBot-DoodleBot/blob/main/assets/3d_models/STL%20files/Caster2.stl)
 1. [chasis-arduino](https://github.com/MarceJara/VinciBot-DoodleBot/blob/main/assets/3d_models/STL%20files/Chassis_Arduino2.stl)
