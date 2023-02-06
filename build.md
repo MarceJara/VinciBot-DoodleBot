@@ -19,7 +19,7 @@ To build our bot we will need the following materials. In some cases we will be 
 1. 2x Geared 5V Stepper - adafruit.com/products/858
 1. 1x ULN2803 Darlington Driver
 1. 1x Half-size breadboard
-1. 12x Male-male jumpers
+1. 20x Male-male jumpers
 1. 1x Micro servo - adafruit.com/products/169
 1. 1x Male pin header - digikey.com/short/t93cbd
 1. 1x 2 x AA Holder - digikey.com/short/tz5bd1
@@ -39,7 +39,7 @@ To build our bot we will need the following materials. In some cases we will be 
 
 # 3D printed parts
 
-![doodle build](assets/robot_pic.jpg){: style="width: 400px;"}
+![doodle build](assets/robot_pic.png){: style="width: 400px;"}
 
 1. [caster](https://github.com/MarceJara/VinciBot-DoodleBot/blob/main/assets/3d_models/STL%20files/Caster2.stl)
 1. [chasis-arduino](https://github.com/MarceJara/VinciBot-DoodleBot/blob/main/assets/3d_models/STL%20files/Chassis_Arduino2.stl)
