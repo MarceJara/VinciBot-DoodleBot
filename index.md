@@ -19,4 +19,4 @@ VinciBot is a painter robot made for teaching STEM and making it draw and maybe 
 |-------|--------|
 | Check out the motor masks | Not implemented |
 | Implement the AI Part | Not implemented |
-| Find a workaround for the gripo f the wheels | Not implemented |
+| Find a workaround for the grip of the wheels | Not implemented |
